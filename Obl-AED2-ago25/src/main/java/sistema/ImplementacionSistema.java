@@ -2,11 +2,13 @@ package sistema;
 
 import interfaz.*;
 import dominio.*;
+import dominio.ABB.*;
 
 public class    ImplementacionSistema implements Sistema  {
     private int maxFarmacias;
     private ListaSE<Farmacia> listaFarmacias;
     private ListaSE<Medicamento> listaMedicamentos;
+    private ABBMedicamento arbolMedicamentos;
 
     // return Retorno.noImplementada();
 
@@ -18,37 +20,46 @@ public class    ImplementacionSistema implements Sistema  {
 
         this.maxFarmacias = maxFarmacias;
         this.listaFarmacias = new ListaSE<>();
-
+        this.arbolMedicamentos = new ABBMedicamento();
+        //TENGO QUE INICIALIZAR EL RESTO DE LAS ESTRUCTURAS ACA;
         return Retorno.ok();
     }
 
     @Override
     public Retorno registrarMedicamento(String codigo, String nombre, String fechaVencimiento, Categoria categoria) {
-        if(codigo == null || nombre == null || fechaVencimiento == null || categoria == null || codigo.trim().isEmpty() || nombre.trim().isEmpty() || fechaVencimiento.trim().isEmpty()){
+
+        if(codigo == null || nombre == null || fechaVencimiento == null || categoria == null ){
+            return Retorno.error1("Alguno de los datos ingresados fue nulo.");
+        }
+
+        final String codigoLimpio = codigo.trim();
+        final String nombreLimpio = nombre.trim();
+        final String fechaVencimientoLimpio = fechaVencimiento.trim();
+
+        if(codigoLimpio.isEmpty() || nombreLimpio.isEmpty() || fechaVencimientoLimpio.isEmpty()){
             return Retorno.error1("Alguno de los datos ingresados fue nulo.");
         }
 
         String patronFecha = "^\\d{4}-\\d{2}-\\d{2}$";
-        if (!fechaVencimiento.matches(patronFecha)) {
+        if (!fechaVencimientoLimpio.matches(patronFecha)) {
             return Retorno.error2("La fecha debe tener el formato AAAA-MM-DD.");
         }
 
-        if(listaMedicamentos == null){
-            this.listaMedicamentos = new ListaSE<>();
+        if(arbolMedicamentos == null){
+            this.arbolMedicamentos = new ABBMedicamento();
         }
 
-        for (int i = 0; i < listaMedicamentos.getCantidad(); i++) {
-            Medicamento m = listaMedicamentos.obtener(i);
-            if (m.getCodigo().equals(codigo)) {
-                return Retorno.error3("Ya existe un medicamento con ese codigo.");
-            }
-            if (m.getNombre().equalsIgnoreCase(nombre)) {
-                return Retorno.error4("Ya existe un medicamento con ese nombre.");
-            }
+        if (this.arbolMedicamentos.obtener(codigoLimpio) != null) {
+            return Retorno.error3("Ya existe un medicamento con ese código.");
         }
 
-        Medicamento nuevoMedicamento = new Medicamento(codigo, nombre, fechaVencimiento, categoria);
-        this.listaMedicamentos.agregar(nuevoMedicamento);
+        if (this.arbolMedicamentos.buscarPorNombre(nombreLimpio) != null) {
+            return Retorno.error4("Ya existe un medicamento con ese nombre.");
+        }
+
+        // Registro exitoso
+        Medicamento nuevoMedicamento = new Medicamento(codigoLimpio, nombreLimpio, fechaVencimientoLimpio, categoria);
+        this.arbolMedicamentos.insertar(nuevoMedicamento);
 
         return Retorno.ok();
     }
