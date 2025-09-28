@@ -7,7 +7,6 @@ import dominio.ABB.*;
 public class    ImplementacionSistema implements Sistema  {
     private int maxFarmacias;
     private ListaSE<Farmacia> listaFarmacias;
-    private ListaSE<Medicamento> listaMedicamentos;
     private ABBMedicamento arbolMedicamentos;
 
     // return Retorno.noImplementada();
@@ -57,16 +56,43 @@ public class    ImplementacionSistema implements Sistema  {
             return Retorno.error4("Ya existe un medicamento con ese nombre.");
         }
 
-        // Registro exitoso
         Medicamento nuevoMedicamento = new Medicamento(codigoLimpio, nombreLimpio, fechaVencimientoLimpio, categoria);
         this.arbolMedicamentos.insertar(nuevoMedicamento);
 
         return Retorno.ok();
     }
 
+    private String formatearCategoria(Categoria c) {
+        //Metodo auxiliar para buscarMedicamentoPorCodigo
+
+        switch (c) {
+            case VENTA_LIBRE: return "Venta libre";
+            case RECETA_COMUN: return "Receta comun";
+            case RECETA_CONTROLADA: return "Receta controlada";
+
+            default: return c.toString();
+        }
+    }
+
     @Override
     public Retorno buscarMedicamentoPorCodigo(String codigo) {
-        return Retorno.noImplementada();
+        if(codigo == null || codigo.trim().isEmpty()){
+            return Retorno.error1("El codigo no puede ser vacio o nulo.");
+        }
+
+        RecorridosBusqueda recorridos = this.arbolMedicamentos.BuscarConContador(codigo);
+
+        if(recorridos.getMedicamento() == null){
+            return Retorno.error2("El medicamento no existe.");
+        }
+
+        Medicamento m =  recorridos.getMedicamento();
+        String salida = m.getCodigo() + ";" +
+                        m.getNombre() + ";" +
+                        m.getFechaVencimiento() + ";" +
+                        formatearCategoria(m.getCategoria());
+
+        return Retorno.ok(recorridos.getRecorridos(), salida);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dominio.ABB;
 
 import dominio.Medicamento;
+import dominio.RecorridosBusqueda;
 
 public class ABBMedicamento implements IABB{
 
@@ -14,6 +15,7 @@ public class ABBMedicamento implements IABB{
         return this.raiz;
     }
 
+    @Override
     public boolean insertar(Medicamento nuevoMedicamento) {
         if (nuevoMedicamento == null || nuevoMedicamento.getCodigo() == null) {
             return false;
@@ -54,7 +56,7 @@ public class ABBMedicamento implements IABB{
         }
     }
 
-
+    @Override
     public boolean pertenece(String codigo) {
         return perteneceRecursivo(this.raiz, codigo);
     }
@@ -77,6 +79,7 @@ public class ABBMedicamento implements IABB{
         return perteneceRecursivo(nodo.getIzq(), codigo);
     }
 
+    @Override
     public Medicamento obtener(String codigo) {
         return obtenerRecursivo(this.raiz, codigo);
     }
@@ -99,7 +102,7 @@ public class ABBMedicamento implements IABB{
         return obtenerRecursivo(nodo.getIzq(), codigo);
     }
 
-
+    @Override
     public void imprimirAsc() {
         imprimirAscRecursivo(this.raiz);
         System.out.println("");
@@ -113,6 +116,7 @@ public class ABBMedicamento implements IABB{
         }
     }
 
+    @Override
     public void imprimirDes() {
         imprimirDesRecursivo(this.raiz);
         System.out.println("");
@@ -126,6 +130,7 @@ public class ABBMedicamento implements IABB{
         }
     }
 
+    @Override
     public Medicamento buscarPorNombre(String nombre) {
         if (nombre == null || nombre.trim().isEmpty()) {
             return null;
@@ -148,5 +153,28 @@ public class ABBMedicamento implements IABB{
         }
 
         return buscarPorNombreRecursivo(nodo.getDer(), nombreBuscado);
+    }
+
+    @Override
+    public RecorridosBusqueda BuscarConContador(String codigo) {
+        return BuscarConContadorRecursivo(this.raiz, codigo, 0);
+    }
+
+    private RecorridosBusqueda BuscarConContadorRecursivo(NodoABBMedicamento nodo, String codigo, int contador){
+        if(nodo == null) {
+            return new RecorridosBusqueda(null, contador);
+        }
+
+        contador++;
+        int comparacion = codigo.compareTo(nodo.getDato().getCodigo());
+
+        if (comparacion == 0) {
+            return new RecorridosBusqueda(nodo.getDato(), contador);
+        } else if (comparacion > 0) {
+            return BuscarConContadorRecursivo(nodo.getDer(), codigo, contador);
+        } else {
+            return BuscarConContadorRecursivo(nodo.getIzq(), codigo, contador);
+        }
+
     }
 }

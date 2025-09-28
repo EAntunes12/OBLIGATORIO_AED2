@@ -28,4 +28,25 @@ public class Test03BuscarMedicamentoPorCodigo {
         assertEquals(Salidas.MED01, retorno.getValorString());
     }
 
+    @Test
+    void buscarMedicamentoError1(){
+        retorno = s.buscarMedicamentoPorCodigo("");
+        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
+
+        retorno = s.buscarMedicamentoPorCodigo("      ");
+        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
+
+        retorno = s.buscarMedicamentoPorCodigo(null);
+        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
+    }
+
+    @Test
+    void buscarMedicamentoError2(){
+        retorno = s.buscarMedicamentoPorCodigo("COD99");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+
+        s.registrarMedicamento("COD01", "Medicamento01", "2026-09-01", Categoria.VENTA_LIBRE);
+        retorno = s.buscarMedicamentoPorCodigo("COD99");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+    }
 }

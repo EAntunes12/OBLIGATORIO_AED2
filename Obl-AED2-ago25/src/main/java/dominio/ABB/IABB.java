@@ -1,6 +1,6 @@
 package dominio.ABB;
 
-import dominio.Medicamento;
+import dominio.*;
 
 public interface IABB {
 
@@ -16,6 +16,6 @@ public interface IABB {
 
     Medicamento buscarPorNombre(String nombre);
 
-
+    RecorridosBusqueda BuscarConContador(String codigo);
 
 }
