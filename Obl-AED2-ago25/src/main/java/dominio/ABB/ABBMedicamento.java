@@ -2,6 +2,7 @@ package dominio.ABB;
 
 import dominio.Medicamento;
 import dominio.RecorridosBusqueda;
+import interfaz.Categoria;
 
 public class ABBMedicamento implements IABB{
 
@@ -103,16 +104,39 @@ public class ABBMedicamento implements IABB{
     }
 
     @Override
-    public void imprimirAsc() {
-        imprimirAscRecursivo(this.raiz);
-        System.out.println("");
+    public String imprimirAsc() {
+        StringBuilder sb = new StringBuilder();
+        imprimirAscRecursivo(this.raiz, sb);
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
     }
 
-    private void imprimirAscRecursivo(NodoABBMedicamento nodo) {
-        if (nodo != null) {
-            imprimirAscRecursivo(nodo.getIzq());
-            System.out.print(nodo.getDato().getCodigo() + " ");
-            imprimirAscRecursivo(nodo.getDer());
+    private void imprimirAscRecursivo(NodoABBMedicamento nodo, StringBuilder sb) {
+        if (nodo == null) return;
+
+        imprimirAscRecursivo(nodo.getIzq(), sb);
+
+        Medicamento m = nodo.getDato();
+        sb.append(m.getCodigo()).append(";")
+                .append(m.getNombre()).append(";")
+                .append(m.getFechaVencimiento()).append(";")
+                .append(formatearCategoria(m.getCategoria()))
+                .append("|");
+
+        imprimirAscRecursivo(nodo.getDer(), sb);
+    }
+
+    private String formatearCategoria(Categoria c) {
+        //Metodo auxiliar para imprimirAsc
+
+        switch (c) {
+            case VENTA_LIBRE: return "Venta libre";
+            case RECETA_COMUN: return "Receta comun";
+            case RECETA_CONTROLADA: return "Receta controlada";
+
+            default: return c.toString();
         }
     }
 

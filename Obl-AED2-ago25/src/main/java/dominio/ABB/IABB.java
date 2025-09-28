@@ -8,7 +8,7 @@ public interface IABB {
 
     boolean pertenece(String codigo);
 
-    void imprimirAsc();
+    String imprimirAsc();
 
     void imprimirDes();
 
