@@ -10,7 +10,7 @@ public interface IABB {
 
     String imprimirAsc();
 
-    void imprimirDes();
+    String imprimirDes();
 
     Medicamento obtener(String codigo);
 

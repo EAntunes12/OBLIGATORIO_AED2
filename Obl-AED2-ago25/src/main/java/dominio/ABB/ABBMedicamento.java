@@ -141,17 +141,28 @@ public class ABBMedicamento implements IABB{
     }
 
     @Override
-    public void imprimirDes() {
-        imprimirDesRecursivo(this.raiz);
-        System.out.println("");
+    public String imprimirDes() {
+        StringBuilder sb = new StringBuilder();
+        imprimirDesRecursivo(this.raiz, sb);
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
     }
 
-    private void imprimirDesRecursivo(NodoABBMedicamento nodo) {
-        if (nodo != null) {
-            imprimirDesRecursivo(nodo.getDer());
-            System.out.print(nodo.getDato().getCodigo() + " ");
-            imprimirDesRecursivo(nodo.getIzq());
-        }
+    private void imprimirDesRecursivo(NodoABBMedicamento nodo, StringBuilder sb) {
+        if (nodo == null) return;
+
+        imprimirDesRecursivo(nodo.getDer(), sb);
+
+        Medicamento m = nodo.getDato();
+        sb.append(m.getCodigo()).append(";")
+                .append(m.getNombre()).append(";")
+                .append(m.getFechaVencimiento()).append(";")
+                .append(formatearCategoria(m.getCategoria()))
+                .append("|");
+
+        imprimirDesRecursivo(nodo.getIzq(), sb);
     }
 
     @Override

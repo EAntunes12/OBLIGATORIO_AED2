@@ -97,13 +97,14 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno listarMedicamentosPorCodigoAscendente() {
-        String listadoMedicamentos = this.arbolMedicamentos.imprimirAsc();
-        return Retorno.ok(listadoMedicamentos);
+        String listadoMedicamentosAsc = this.arbolMedicamentos.imprimirAsc();
+        return Retorno.ok(listadoMedicamentosAsc);
     }
 
     @Override
     public Retorno listarMedicamentosPorCodigoDescendente() {
-        return Retorno.noImplementada();
+        String listadoMedicamentosDes = this.arbolMedicamentos.imprimirDes();
+        return Retorno.ok(listadoMedicamentosDes);
     }
 
     @Override
