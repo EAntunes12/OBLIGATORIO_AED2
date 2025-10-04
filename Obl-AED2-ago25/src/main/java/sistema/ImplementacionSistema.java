@@ -9,7 +9,25 @@ public class    ImplementacionSistema implements Sistema  {
     private ListaSE<Farmacia> listaFarmacias;
     private ABBMedicamento arbolMedicamentos;
 
-    // return Retorno.noImplementada();
+    //---------METODOS AUXILIARES-------------------------
+
+    public String generarStringSalida(String codigo, String nombre, String fecha, String categoria){
+        return codigo + ";" + nombre + ";" + fecha + ";" + categoria;
+    }
+
+    private String formatearCategoria(Categoria c) {
+        //Metodo auxiliar para buscarMedicamentoPorCodigo
+
+        switch (c) {
+            case VENTA_LIBRE: return "Venta libre";
+            case RECETA_COMUN: return "Receta comun";
+            case RECETA_CONTROLADA: return "Receta controlada";
+
+            default: return c.toString();
+        }
+    }
+
+    //---------------------------------------------------------
 
     @Override
     public Retorno inicializarSistema(int maxFarmacias) {
@@ -62,18 +80,6 @@ public class    ImplementacionSistema implements Sistema  {
         return Retorno.ok();
     }
 
-    private String formatearCategoria(Categoria c) {
-        //Metodo auxiliar para buscarMedicamentoPorCodigo
-
-        switch (c) {
-            case VENTA_LIBRE: return "Venta libre";
-            case RECETA_COMUN: return "Receta comun";
-            case RECETA_CONTROLADA: return "Receta controlada";
-
-            default: return c.toString();
-        }
-    }
-
     @Override
     public Retorno buscarMedicamentoPorCodigo(String codigo) {
         if(codigo == null || codigo.trim().isEmpty()){
@@ -87,10 +93,7 @@ public class    ImplementacionSistema implements Sistema  {
         }
 
         Medicamento m =  recorridos.getMedicamento();
-        String salida = m.getCodigo() + ";" +
-                        m.getNombre() + ";" +
-                        m.getFechaVencimiento() + ";" +
-                        formatearCategoria(m.getCategoria());
+        String salida = generarStringSalida(m.getCodigo(), m.getNombre(), m.getFechaVencimiento(), formatearCategoria(m.getCategoria()));
 
         return Retorno.ok(recorridos.getRecorridos(), salida);
     }
@@ -109,8 +112,21 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno buscarMedicamentoPorNombre(String nombre) {
-        return Retorno.noImplementada();
+        if(nombre == null || nombre.trim().isEmpty()){
+            return Retorno.error1("El nombre no puede ser vacio.");
+        }
+        RecorridosBusqueda recorridos = this.arbolMedicamentos.BuscarPorNombreContador(nombre);
+
+        if(recorridos.getMedicamento() == null){
+            return Retorno.error2("El medicamento no existe.");
+        }
+
+        Medicamento m =  recorridos.getMedicamento();
+        String salida = generarStringSalida(m.getCodigo(), m.getNombre(), m.getFechaVencimiento(), formatearCategoria(m.getCategoria()));
+
+        return Retorno.ok(recorridos.getRecorridos(), salida);
     }
+
 
     @Override
     public Retorno listarMedicamentosPorNombreAscendente() {

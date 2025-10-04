@@ -212,4 +212,29 @@ public class ABBMedicamento implements IABB{
         }
 
     }
+
+    @Override
+    public RecorridosBusqueda BuscarPorNombreContador(String nombre) {
+        if(nombre == null || nombre.trim().isEmpty()){
+            return null;
+        }
+        return BuscarPorNombreContadorRecursivo(this.raiz, nombre, 0);
+    }
+
+    private RecorridosBusqueda BuscarPorNombreContadorRecursivo(NodoABBMedicamento nodo, String nombre, int contador) {
+        if(nodo == null) {
+            return new RecorridosBusqueda(null, contador);
+        }
+
+        contador++;
+        int comparacion = nombre.compareTo(nodo.getDato().getNombre());
+
+        if (comparacion == 0) {
+            return new RecorridosBusqueda(nodo.getDato(), contador);
+        }else if (comparacion > 0) {
+            return BuscarPorNombreContadorRecursivo(nodo.getDer(), nombre, contador);
+        }else{
+            return BuscarPorNombreContadorRecursivo(nodo.getIzq(), nombre, contador);
+        }
+    }
 }

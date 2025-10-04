@@ -18,4 +18,6 @@ public interface IABB {
 
     RecorridosBusqueda BuscarConContador(String codigo);
 
+    RecorridosBusqueda BuscarPorNombreContador(String nombre);
+
 }
