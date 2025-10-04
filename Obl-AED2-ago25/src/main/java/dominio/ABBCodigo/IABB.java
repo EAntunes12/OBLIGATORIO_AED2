@@ -1,4 +1,4 @@
-package dominio.ABB;
+package dominio.ABBCodigo;
 
 import dominio.*;
 

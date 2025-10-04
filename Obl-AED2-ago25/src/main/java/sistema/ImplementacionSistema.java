@@ -2,12 +2,14 @@ package sistema;
 
 import interfaz.*;
 import dominio.*;
-import dominio.ABB.*;
+import dominio.ABBCodigo.*;
+import dominio.ABBNombre.*;
 
 public class    ImplementacionSistema implements Sistema  {
     private int maxFarmacias;
     private ListaSE<Farmacia> listaFarmacias;
     private ABBMedicamento arbolMedicamentos;
+    private ABBMedicamentoNombre arbolMedicamentosPorNombre;
 
     //---------METODOS AUXILIARES-------------------------
 
@@ -38,6 +40,7 @@ public class    ImplementacionSistema implements Sistema  {
         this.maxFarmacias = maxFarmacias;
         this.listaFarmacias = new ListaSE<>();
         this.arbolMedicamentos = new ABBMedicamento();
+        this.arbolMedicamentosPorNombre = new ABBMedicamentoNombre();
         //TENGO QUE INICIALIZAR EL RESTO DE LAS ESTRUCTURAS ACA;
         return Retorno.ok();
     }
@@ -76,6 +79,7 @@ public class    ImplementacionSistema implements Sistema  {
 
         Medicamento nuevoMedicamento = new Medicamento(codigoLimpio, nombreLimpio, fechaVencimientoLimpio, categoria);
         this.arbolMedicamentos.insertar(nuevoMedicamento);
+        this.arbolMedicamentosPorNombre.insertar(nuevoMedicamento);
 
         return Retorno.ok();
     }
@@ -127,15 +131,16 @@ public class    ImplementacionSistema implements Sistema  {
         return Retorno.ok(recorridos.getRecorridos(), salida);
     }
 
-
     @Override
     public Retorno listarMedicamentosPorNombreAscendente() {
-        return Retorno.noImplementada();
+        String listadoMedicamentosPorNombreAscendente = this.arbolMedicamentosPorNombre.imprimirAsc();
+        return Retorno.ok(listadoMedicamentosPorNombreAscendente);
     }
 
     @Override
     public Retorno listarMedicamentosPorNombreDescendente() {
-        return Retorno.noImplementada();
+        String listadoMedicamentosPorNombreDescendente = this.arbolMedicamentosPorNombre.imprimirDes();
+        return Retorno.ok(listadoMedicamentosPorNombreDescendente);
     }
 
     @Override
