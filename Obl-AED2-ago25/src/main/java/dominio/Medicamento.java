@@ -46,4 +46,24 @@ public class Medicamento {
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
+
+    private String formatearCategoria(Categoria c) {
+        switch (c) {
+            case VENTA_LIBRE: return "Venta libre";
+            case RECETA_COMUN: return "Receta comun";
+            case RECETA_CONTROLADA: return "Receta controlada";
+
+            default: return c.toString();
+        }
+    }
+
+    @Override
+    public String toString() {
+        String categoria = formatearCategoria(this.categoria);
+
+        return this.codigo + ";"
+                + this.nombre + ";"
+                + this.fechaVencimiento + ";"
+                + categoria;
+    }
 }

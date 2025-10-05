@@ -1,5 +1,8 @@
 package sistema;
 
+import dominio.ABB.ABB;
+import dominio.ABB.ABBPorCodigo;
+import dominio.ABB.ABBPorNombre;
 import interfaz.*;
 import dominio.*;
 import dominio.ABBCodigo.*;
@@ -8,8 +11,10 @@ import dominio.ABBNombre.*;
 public class    ImplementacionSistema implements Sistema  {
     private int maxFarmacias;
     private ListaSE<Farmacia> listaFarmacias;
-    private ABBMedicamento arbolMedicamentos;
-    private ABBMedicamentoNombre arbolMedicamentosPorNombre;
+//    private ABBMedicamento arbolMedicamentos;
+//    private ABBMedicamentoNombre arbolMedicamentosPorNombre;
+    private ABB<Medicamento> arbolPorCodigo;
+    private ABB<Medicamento> arbolPorNombre;
 
     //---------METODOS AUXILIARES-------------------------
 
@@ -39,8 +44,11 @@ public class    ImplementacionSistema implements Sistema  {
 
         this.maxFarmacias = maxFarmacias;
         this.listaFarmacias = new ListaSE<>();
-        this.arbolMedicamentos = new ABBMedicamento();
-        this.arbolMedicamentosPorNombre = new ABBMedicamentoNombre();
+        //this.arbolMedicamentos = new ABBMedicamento();
+        //this.arbolMedicamentosPorNombre = new ABBMedicamentoNombre();
+        this.arbolPorCodigo = new ABBPorCodigo();
+        this.arbolPorNombre = new ABBPorNombre();
+
         //TENGO QUE INICIALIZAR EL RESTO DE LAS ESTRUCTURAS ACA;
         return Retorno.ok();
     }
@@ -65,21 +73,22 @@ public class    ImplementacionSistema implements Sistema  {
             return Retorno.error2("La fecha debe tener el formato AAAA-MM-DD.");
         }
 
-        if(arbolMedicamentos == null){
-            this.arbolMedicamentos = new ABBMedicamento();
+        if(arbolPorCodigo == null || arbolPorNombre == null){
+            this.arbolPorCodigo = new ABBPorCodigo();
+            this.arbolPorNombre = new ABBPorNombre();
         }
 
-        if (this.arbolMedicamentos.obtener(codigoLimpio) != null) {
+        if (this.arbolPorCodigo.obtener(codigoLimpio) != null && this.arbolPorNombre.obtener(codigoLimpio) != null) {
             return Retorno.error3("Ya existe un medicamento con ese código.");
         }
 
-        if (this.arbolMedicamentos.buscarPorNombre(nombreLimpio) != null) {
+        if (this.arbolPorCodigo.buscarPorNombre(nombreLimpio) != null && arbolPorNombre.buscarPorNombre(nombreLimpio) != null) {
             return Retorno.error4("Ya existe un medicamento con ese nombre.");
         }
 
         Medicamento nuevoMedicamento = new Medicamento(codigoLimpio, nombreLimpio, fechaVencimientoLimpio, categoria);
-        this.arbolMedicamentos.insertar(nuevoMedicamento);
-        this.arbolMedicamentosPorNombre.insertar(nuevoMedicamento);
+        this.arbolPorCodigo.insertar(nuevoMedicamento);
+        this.arbolPorNombre.insertar(nuevoMedicamento);
 
         return Retorno.ok();
     }
@@ -90,7 +99,7 @@ public class    ImplementacionSistema implements Sistema  {
             return Retorno.error1("El codigo no puede ser vacio o nulo.");
         }
 
-        RecorridosBusqueda recorridos = this.arbolMedicamentos.BuscarConContador(codigo);
+        RecorridosBusqueda recorridos = this.arbolPorCodigo.buscarConContador(codigo);
 
         if(recorridos.getMedicamento() == null){
             return Retorno.error2("El medicamento no existe.");
@@ -104,13 +113,13 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno listarMedicamentosPorCodigoAscendente() {
-        String listadoMedicamentosAsc = this.arbolMedicamentos.imprimirAsc();
+        String listadoMedicamentosAsc = this.arbolPorCodigo.imprimirAsc();
         return Retorno.ok(listadoMedicamentosAsc);
     }
 
     @Override
     public Retorno listarMedicamentosPorCodigoDescendente() {
-        String listadoMedicamentosDes = this.arbolMedicamentos.imprimirDes();
+        String listadoMedicamentosDes = this.arbolPorCodigo.imprimirDes();
         return Retorno.ok(listadoMedicamentosDes);
     }
 
@@ -119,7 +128,7 @@ public class    ImplementacionSistema implements Sistema  {
         if(nombre == null || nombre.trim().isEmpty()){
             return Retorno.error1("El nombre no puede ser vacio.");
         }
-        RecorridosBusqueda recorridos = this.arbolMedicamentos.BuscarPorNombreContador(nombre);
+        RecorridosBusqueda recorridos = this.arbolPorNombre.buscarPorNombreConContador(nombre);
 
         if(recorridos.getMedicamento() == null){
             return Retorno.error2("El medicamento no existe.");
@@ -133,13 +142,13 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno listarMedicamentosPorNombreAscendente() {
-        String listadoMedicamentosPorNombreAscendente = this.arbolMedicamentosPorNombre.imprimirAsc();
+        String listadoMedicamentosPorNombreAscendente = this.arbolPorNombre.imprimirAsc();
         return Retorno.ok(listadoMedicamentosPorNombreAscendente);
     }
 
     @Override
     public Retorno listarMedicamentosPorNombreDescendente() {
-        String listadoMedicamentosPorNombreDescendente = this.arbolMedicamentosPorNombre.imprimirDes();
+        String listadoMedicamentosPorNombreDescendente = this.arbolPorNombre.imprimirDes();
         return Retorno.ok(listadoMedicamentosPorNombreDescendente);
     }
 
