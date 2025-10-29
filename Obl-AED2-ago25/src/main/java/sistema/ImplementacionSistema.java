@@ -5,8 +5,6 @@ import dominio.ABB.ABBPorCodigo;
 import dominio.ABB.ABBPorNombre;
 import interfaz.*;
 import dominio.*;
-import dominio.ABBCodigo.*;
-import dominio.ABBNombre.*;
 
 public class    ImplementacionSistema implements Sistema  {
     private int maxFarmacias;
@@ -23,8 +21,6 @@ public class    ImplementacionSistema implements Sistema  {
     }
 
     private String formatearCategoria(Categoria c) {
-        //Metodo auxiliar para buscarMedicamentoPorCodigo
-
         switch (c) {
             case VENTA_LIBRE: return "Venta libre";
             case RECETA_COMUN: return "Receta comun";
@@ -78,11 +74,11 @@ public class    ImplementacionSistema implements Sistema  {
             this.arbolPorNombre = new ABBPorNombre();
         }
 
-        if (this.arbolPorCodigo.obtener(codigoLimpio) != null && this.arbolPorNombre.obtener(codigoLimpio) != null) {
+        if (this.arbolPorCodigo.obtener(codigoLimpio) != null) {
             return Retorno.error3("Ya existe un medicamento con ese código.");
         }
 
-        if (this.arbolPorCodigo.buscarPorNombre(nombreLimpio) != null && arbolPorNombre.buscarPorNombre(nombreLimpio) != null) {
+        if (this.arbolPorNombre.buscarPorNombre(nombreLimpio) != null) {
             return Retorno.error4("Ya existe un medicamento con ese nombre.");
         }
 

@@ -1,16 +1,16 @@
 package dominio.ABB;
 
+import dominio.ABB.NodoABBGenerico;
 import dominio.Medicamento;
 import dominio.RecorridosBusqueda;
-
-import java.lang.reflect.Method;
-import java.util.Comparator;
 
 public abstract class ABB<T> {
 
     private NodoABBGenerico<T> raiz;
 
-    protected String getClave(T dato){
+    protected abstract Comparable getClave(T dato);
+
+    protected String getNombre(T dato) {
         return null;
     }
 
@@ -25,7 +25,7 @@ public abstract class ABB<T> {
     public boolean insertar(T dato) {
         if (dato == null) return false;
 
-        Comparable clave = obtenerClave(dato);
+        Comparable clave = getClave(dato);
         if (clave == null) return false;
 
         if (raiz == null) {
@@ -36,10 +36,10 @@ public abstract class ABB<T> {
     }
 
     private boolean insertarRec(NodoABBGenerico<T> nodo, T dato, Comparable clave) {
-        Comparable claveNodo = obtenerClave(nodo.getDato());
+        Comparable claveNodo = getClave(nodo.getDato());
         int cmp = clave.compareTo(claveNodo);
 
-        if (cmp == 0) return false;
+        if (cmp == 0) return false; // duplicado
 
         if (cmp < 0) {
             if (nodo.getIzq() != null)
@@ -61,7 +61,7 @@ public abstract class ABB<T> {
     private boolean perteneceRec(NodoABBGenerico<T> nodo, Comparable clave) {
         if (nodo == null) return false;
 
-        Comparable claveNodo = obtenerClave(nodo.getDato());
+        Comparable claveNodo = getClave(nodo.getDato());
         int cmp = clave.compareTo(claveNodo);
 
         if (cmp == 0) return true;
@@ -76,7 +76,7 @@ public abstract class ABB<T> {
     private T obtenerRec(NodoABBGenerico<T> nodo, Comparable clave) {
         if (nodo == null) return null;
 
-        Comparable claveNodo = obtenerClave(nodo.getDato());
+        Comparable claveNodo = getClave(nodo.getDato());
         int cmp = clave.compareTo(claveNodo);
 
         if (cmp == 0) return nodo.getDato();
@@ -108,7 +108,6 @@ public abstract class ABB<T> {
     private void imprimirDesRec(NodoABBGenerico<T> nodo, StringBuilder sb) {
         if (nodo == null) return;
         imprimirDesRec(nodo.getDer(), sb);
-
         sb.append(nodo.getDato().toString()).append("|");
         imprimirDesRec(nodo.getIzq(), sb);
     }
@@ -121,7 +120,7 @@ public abstract class ABB<T> {
     private T buscarPorNombreRec(NodoABBGenerico<T> nodo, String nombre) {
         if (nodo == null) return null;
 
-        String nombreNodo = obtenerNombre(nodo.getDato());
+        String nombreNodo = getNombre(nodo.getDato());
         if (nombreNodo != null && nombreNodo.toLowerCase().equals(nombre)) {
             return nodo.getDato();
         }
@@ -139,7 +138,7 @@ public abstract class ABB<T> {
     private RecorridosBusqueda buscarConContadorRec(NodoABBGenerico<T> nodo, Comparable clave, int cont) {
         if (nodo == null) return new RecorridosBusqueda(null, cont);
 
-        Comparable claveNodo = obtenerClave(nodo.getDato());
+        Comparable claveNodo = getClave(nodo.getDato());
         cont++;
         int cmp = clave.compareTo(claveNodo);
 
@@ -149,6 +148,7 @@ public abstract class ABB<T> {
     }
 
     public RecorridosBusqueda buscarPorNombreConContador(String nombre) {
+        if (nombre == null || nombre.isEmpty()) return new RecorridosBusqueda(null, 0);
         return buscarPorNombreContRec(raiz, nombre.trim().toLowerCase(), 0);
     }
 
@@ -156,8 +156,7 @@ public abstract class ABB<T> {
         if (nodo == null) return new RecorridosBusqueda(null, cont);
 
         cont++;
-        String nombreNodo = obtenerNombre(nodo.getDato());
-
+        String nombreNodo = getNombre(nodo.getDato());
         if (nombreNodo != null && nombreNodo.toLowerCase().equals(nombre)) {
             return new RecorridosBusqueda((Medicamento) nodo.getDato(), cont);
         }
@@ -167,26 +166,4 @@ public abstract class ABB<T> {
 
         return buscarPorNombreContRec(nodo.getDer(), nombre, izq.getRecorridos());
     }
-
-    private Comparable obtenerClave(T dato) {
-        try {
-            Method m = dato.getClass().getMethod("getCodigo");
-            Object valor = m.invoke(dato);
-            return (Comparable) valor;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private String obtenerNombre(T dato) {
-        try {
-            Method m = dato.getClass().getMethod("getNombre");
-            Object valor = m.invoke(dato);
-            return valor != null ? valor.toString() : null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    protected abstract String getClave(Medicamento m);
 }

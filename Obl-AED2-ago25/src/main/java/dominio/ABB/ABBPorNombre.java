@@ -8,5 +8,8 @@ public class ABBPorNombre extends ABB<Medicamento> {
         return m.getNombre();
     }
 
-    public ABBPorNombre(){}
+    @Override
+    protected String getNombre(Medicamento m) {
+        return m.getNombre();
+    }
 }
