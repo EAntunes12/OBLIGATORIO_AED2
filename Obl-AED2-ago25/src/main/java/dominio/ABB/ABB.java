@@ -3,6 +3,7 @@ package dominio.ABB;
 import dominio.ABB.NodoABBGenerico;
 import dominio.Medicamento;
 import dominio.RecorridosBusqueda;
+import interfaz.Categoria;
 
 public abstract class ABB<T> {
 
@@ -166,4 +167,22 @@ public abstract class ABB<T> {
 
         return buscarPorNombreContRec(nodo.getDer(), nombre, izq.getRecorridos());
     }
+
+    public String imprimirPorCategoria(Categoria categoria) {
+        StringBuilder sb = new StringBuilder();
+        imprimirPorCategoriaRec(raiz, sb, categoria);
+        if (sb.length() > 0) sb.setLength(sb.length() - 1);
+        return sb.toString();
+    }
+
+    private void imprimirPorCategoriaRec(NodoABBGenerico<T> nodo, StringBuilder sb, Categoria categoria) {
+        if(nodo == null)  return;
+
+        imprimirPorCategoriaRec(nodo.getIzq(), sb, categoria);
+        if(((Medicamento) nodo.getDato()).getCategoria() == categoria){
+            sb.append(nodo.getDato().toString()).append("|");
+        }
+        imprimirPorCategoriaRec(nodo.getDer(), sb, categoria);
+    }
+
 }

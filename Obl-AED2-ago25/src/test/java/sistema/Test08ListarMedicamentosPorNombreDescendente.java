@@ -52,5 +52,5 @@ public class Test08ListarMedicamentosPorNombreDescendente {
         assertEquals(Salidas.MED03 + "|" + Salidas.MED02 + "|" + Salidas.MED01, retorno.getValorString());
     }
 
-    
+
 }

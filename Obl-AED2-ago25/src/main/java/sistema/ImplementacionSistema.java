@@ -1,6 +1,7 @@
 package sistema;
 
 import dominio.ABB.ABB;
+import dominio.ABB.ABBPorCategoria;
 import dominio.ABB.ABBPorCodigo;
 import dominio.ABB.ABBPorNombre;
 import interfaz.*;
@@ -13,6 +14,7 @@ public class    ImplementacionSistema implements Sistema  {
 //    private ABBMedicamentoNombre arbolMedicamentosPorNombre;
     private ABB<Medicamento> arbolPorCodigo;
     private ABB<Medicamento> arbolPorNombre;
+    private ABB<Medicamento> arbolPorCategoria;
 
     //---------METODOS AUXILIARES-------------------------
 
@@ -44,6 +46,7 @@ public class    ImplementacionSistema implements Sistema  {
         //this.arbolMedicamentosPorNombre = new ABBMedicamentoNombre();
         this.arbolPorCodigo = new ABBPorCodigo();
         this.arbolPorNombre = new ABBPorNombre();
+        this.arbolPorCategoria = new ABBPorCategoria();
 
         //TENGO QUE INICIALIZAR EL RESTO DE LAS ESTRUCTURAS ACA;
         return Retorno.ok();
@@ -69,9 +72,10 @@ public class    ImplementacionSistema implements Sistema  {
             return Retorno.error2("La fecha debe tener el formato AAAA-MM-DD.");
         }
 
-        if(arbolPorCodigo == null || arbolPorNombre == null){
+        if(arbolPorCodigo == null || arbolPorNombre == null || arbolPorCategoria == null){
             this.arbolPorCodigo = new ABBPorCodigo();
             this.arbolPorNombre = new ABBPorNombre();
+            this.arbolPorCategoria = new ABBPorCategoria();
         }
 
         if (this.arbolPorCodigo.obtener(codigoLimpio) != null) {
@@ -85,6 +89,7 @@ public class    ImplementacionSistema implements Sistema  {
         Medicamento nuevoMedicamento = new Medicamento(codigoLimpio, nombreLimpio, fechaVencimientoLimpio, categoria);
         this.arbolPorCodigo.insertar(nuevoMedicamento);
         this.arbolPorNombre.insertar(nuevoMedicamento);
+        this.arbolPorCategoria.insertar(nuevoMedicamento);
 
         return Retorno.ok();
     }
@@ -150,7 +155,11 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno listarMedicamentosPorCategoría(Categoria unaCategoria) {
-        return Retorno.noImplementada();
+        if(unaCategoria == null){
+            return Retorno.error1("La categoria no puede ser nula.");
+        }
+        String listadoMedicamentosPorCategoria = this.arbolPorCategoria.imprimirPorCategoria(unaCategoria);
+        return Retorno.ok(listadoMedicamentosPorCategoria);
     }
 
     @Override
