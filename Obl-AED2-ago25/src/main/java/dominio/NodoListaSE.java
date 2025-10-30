@@ -1,8 +1,8 @@
 package dominio;
 
 public class NodoListaSE<T> {
-    public T dato;
-    public NodoListaSE<T> sig;
+    private T dato;
+    private NodoListaSE<T> sig;
 
     public NodoListaSE(T dato) {
         this.dato = dato;

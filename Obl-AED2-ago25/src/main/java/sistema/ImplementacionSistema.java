@@ -4,17 +4,18 @@ import dominio.ABB.ABB;
 import dominio.ABB.ABBPorCategoria;
 import dominio.ABB.ABBPorCodigo;
 import dominio.ABB.ABBPorNombre;
+import dominio.GRAFO.GrafoFarmacia;
 import interfaz.*;
 import dominio.*;
 
+import java.util.ArrayList;
+
 public class    ImplementacionSistema implements Sistema  {
     private int maxFarmacias;
-    private ListaSE<Farmacia> listaFarmacias;
-//    private ABBMedicamento arbolMedicamentos;
-//    private ABBMedicamentoNombre arbolMedicamentosPorNombre;
     private ABB<Medicamento> arbolPorCodigo;
     private ABB<Medicamento> arbolPorNombre;
     private ABB<Medicamento> arbolPorCategoria;
+    private GrafoFarmacia grafoFarmacias;
 
     //---------METODOS AUXILIARES-------------------------
 
@@ -41,9 +42,7 @@ public class    ImplementacionSistema implements Sistema  {
         }
 
         this.maxFarmacias = maxFarmacias;
-        this.listaFarmacias = new ListaSE<>();
-        //this.arbolMedicamentos = new ABBMedicamento();
-        //this.arbolMedicamentosPorNombre = new ABBMedicamentoNombre();
+        this.grafoFarmacias = new GrafoFarmacia(maxFarmacias);
         this.arbolPorCodigo = new ABBPorCodigo();
         this.arbolPorNombre = new ABBPorNombre();
         this.arbolPorCategoria = new ABBPorCategoria();
@@ -164,7 +163,22 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno registrarFarmacia(String codigo, String nombre) {
-        return Retorno.noImplementada();
+        if(codigo == null || nombre == null || nombre.trim().isEmpty() || codigo.trim().isEmpty()){
+            return Retorno.error2("El codigo o el nombre no pueden ser vacios.");
+        }
+
+        if(grafoFarmacias.existeFarmacia(codigo)){
+            return Retorno.error3("Ya existe una farmacia con ese codigo.");
+        }
+
+        if(grafoFarmacias.getCantidad() >= grafoFarmacias.getMaxFarmacias()){
+            return Retorno.error1("Ya hay " + maxFarmacias + " farmacias registradas.");
+        }
+
+        Farmacia f = new Farmacia(codigo, nombre);
+        grafoFarmacias.agregarFarmacia(f);
+
+        return Retorno.ok();
     }
 
     @Override

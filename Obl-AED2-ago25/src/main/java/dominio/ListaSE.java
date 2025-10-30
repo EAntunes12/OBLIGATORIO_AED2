@@ -11,7 +11,7 @@ public class ListaSE<T> {
 
     public void agregarInicio(T dato) {
         NodoListaSE<T> nuevo = new NodoListaSE<>(dato);
-        nuevo.sig = inicio;
+        nuevo.setSig(inicio);
         inicio = nuevo;
         cantidad++;
     }
@@ -35,7 +35,7 @@ public class ListaSE<T> {
 
         NodoListaSE<T> actual = inicio;
         for (int i = 0; i < indice; i++) {
-            actual = actual.sig;
+            actual = actual.getSig();
         }
 
         return actual.getDato();
@@ -48,11 +48,11 @@ public class ListaSE<T> {
             this.inicio = nuevo;
         } else {
             NodoListaSE<T> actual = this.inicio;
-            while (actual.sig != null) {
-                actual = actual.sig;
+            while (actual.getSig() != null) {
+                actual = actual.getSig();
             }
 
-            actual.sig = nuevo;
+            actual.setSig(nuevo);
         }
 
         this.cantidad++;

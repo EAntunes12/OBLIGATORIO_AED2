@@ -1,14 +1,21 @@
 package dominio;
 
-public class Farmacia {
-    private String nombre;
-    private String direccion;
+import interfaz.Sistema;
 
-    public Farmacia(String nombre, String direccion) {
+public class Farmacia implements Comparable<Farmacia>{
+    private String nombre;
+    private String codigo;
+
+    public Farmacia(String nombre, String codigo) {
         this.nombre = nombre;
-        this.direccion = direccion;
+        this.codigo = codigo;
     }
 
     public String getNombre() { return nombre; }
-    public String getDireccion() { return direccion; }
+    public String getCodigo() { return codigo; }
+
+    @Override
+    public int compareTo(Farmacia o) {
+        return this.codigo.compareTo(o.codigo);
+    }
 }
