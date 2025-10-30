@@ -17,14 +17,14 @@ public class GrafoFarmacia {
     }
 
     private ListaSE<Farmacia> farmacias;
-    private boolean[][] matrizDeAdyacencias;
+    private Conexion[][] matrizDeAdyacencias;
     private int maxFarmacias;
     private int cantidad;
 
     public GrafoFarmacia(int maxFarmacias){
         this.maxFarmacias = maxFarmacias;
         this.farmacias = new ListaSE<>();
-        this.matrizDeAdyacencias = new boolean[maxFarmacias][maxFarmacias];
+        this.matrizDeAdyacencias = new Conexion[maxFarmacias][maxFarmacias];
         this.cantidad = 0;
     }
 
@@ -43,6 +43,30 @@ public class GrafoFarmacia {
         farmacias.agregar(f);
         cantidad++;
     }
+
+    public int getIndiceFarmacia(String codigo){
+        NodoListaSE<Farmacia> aux = farmacias.getInicio();
+        int i = 0;
+        while (aux != null) {
+            if (aux.getDato().getCodigo().equals(codigo)){
+                return i;
+            }
+            aux = aux.getSig();
+            i++;
+        }
+        return -1;
+    }
+
+    public boolean existeConexion(int i, int j){
+        return matrizDeAdyacencias[i][j] != null;
+    }
+
+    public void crearConexion(int i, int j, Conexion conexion){
+        matrizDeAdyacencias[i][j] = conexion;
+        matrizDeAdyacencias[j][i] = conexion;
+    }
+
+
 
 
 }

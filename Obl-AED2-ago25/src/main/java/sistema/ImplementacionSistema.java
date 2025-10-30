@@ -4,6 +4,7 @@ import dominio.ABB.ABB;
 import dominio.ABB.ABBPorCategoria;
 import dominio.ABB.ABBPorCodigo;
 import dominio.ABB.ABBPorNombre;
+import dominio.GRAFO.Conexion;
 import dominio.GRAFO.GrafoFarmacia;
 import interfaz.*;
 import dominio.*;
@@ -175,7 +176,7 @@ public class    ImplementacionSistema implements Sistema  {
             return Retorno.error1("Ya hay " + maxFarmacias + " farmacias registradas.");
         }
 
-        Farmacia f = new Farmacia(codigo, nombre);
+        Farmacia f = new Farmacia(nombre, codigo);
         grafoFarmacias.agregarFarmacia(f);
 
         return Retorno.ok();
@@ -183,7 +184,30 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno registrarConexion(String codigoOrigen, String codigoDestino, int tiempo, int distancia, int costo) {
-        return Retorno.noImplementada();
+        if(codigoOrigen == null || codigoDestino == null || codigoDestino.trim().isEmpty()){
+            return Retorno.error1("Los codigos no pueden ser vacios.");
+        }
+        if(tiempo <= 0 || costo <= 0 || distancia <= 0){
+            return Retorno.error4("Los datos deben ser mayores a 0");
+        }
+        int indiceOrigen = grafoFarmacias.getIndiceFarmacia(codigoOrigen);
+        int indiceDestino = grafoFarmacias.getIndiceFarmacia(codigoDestino);
+
+        if(indiceOrigen == -1){
+            return Retorno.error2("No existe la farmacia de origen.");
+        }
+        if(indiceDestino == -1){
+            return Retorno.error3("No existe la farmacia de destino.");
+        }
+
+        if(grafoFarmacias.existeConexion(indiceOrigen, indiceDestino)){
+            return Retorno.error5("Ya existe esa conexion.");
+        }
+
+        Conexion conexion = new Conexion(tiempo, distancia, costo);
+        grafoFarmacias.crearConexion(indiceOrigen, indiceDestino, conexion);
+
+        return Retorno.ok();
     }
 
     @Override
