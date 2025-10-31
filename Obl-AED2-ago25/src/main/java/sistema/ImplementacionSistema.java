@@ -212,7 +212,34 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno redFarmaciasPorCantidadDeConexiones(String codigoOrigen, int cantidad) {
-        return Retorno.noImplementada();
+        if(cantidad < 0){
+            return Retorno.error1("La cantidad no puede ser menor a 0");
+        }
+        if(codigoOrigen == null || codigoOrigen.trim().isEmpty()){
+            return Retorno.error2("El codigo de origen no puede ser vacio");
+        }
+        if(!grafoFarmacias.existeFarmacia(codigoOrigen)){
+            return Retorno.error3("La farmacia no existe en el sistema");
+        }
+
+        ListaSE<Farmacia> listaFarmacias = grafoFarmacias.obtenerRedFarmacias(codigoOrigen, cantidad);
+        listaFarmacias.ordenar();
+
+        StringBuilder sb = new StringBuilder();
+        NodoListaSE<Farmacia> actual = listaFarmacias.getInicio();
+
+        while (actual != null) {
+            Farmacia f = actual.getDato();
+            sb.append(f.getCodigo()).append(";").append(f.getNombre());
+
+            if (actual.getSig() != null) {
+                sb.append("|");
+            }
+
+            actual = actual.getSig();
+        }
+
+        return Retorno.ok(sb.toString());
     }
 
     @Override

@@ -57,4 +57,28 @@ public class ListaSE<T> {
 
         this.cantidad++;
     }
+
+    public void ordenar() {
+        if (inicio == null) return;
+
+        boolean huboCambio;
+        do {
+            huboCambio = false;
+            NodoListaSE<T> actual = inicio;
+
+            while (actual.getSig() != null) {
+                Comparable<T> datoActual = (Comparable<T>) actual.getDato();
+                if (datoActual.compareTo(actual.getSig().getDato()) > 0) {
+                    // Intercambiar
+                    T temp = actual.getDato();
+                    actual.setDato(actual.getSig().getDato());
+                    actual.getSig().setDato(temp);
+                    huboCambio = true;
+                }
+                actual = actual.getSig();
+            }
+        } while (huboCambio);
+    }
+
+
 }
