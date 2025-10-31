@@ -244,7 +244,16 @@ public class    ImplementacionSistema implements Sistema  {
 
     @Override
     public Retorno analizarFarmacia(String codigoOrigen) {
-        return Retorno.noImplementada();
+        if(codigoOrigen == null || codigoOrigen.trim().isEmpty()){
+            return Retorno.error1("El codigo no puede ser vacio");
+        }
+        if(!grafoFarmacias.existeFarmacia(codigoOrigen)){
+            return Retorno.error2("No existe esa farmacia en el sistema");
+        }
+
+        boolean esCritica = grafoFarmacias.esFarmaciaCritica(codigoOrigen);
+        String mensaje = esCritica ? "SI" : "NO";
+        return Retorno.ok(mensaje);
     }
 
     @Override

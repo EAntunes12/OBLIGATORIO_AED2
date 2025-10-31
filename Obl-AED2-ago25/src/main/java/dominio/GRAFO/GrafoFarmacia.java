@@ -119,6 +119,55 @@ public class GrafoFarmacia {
         return farmaciasCercanas;
     }
 
+    public boolean esFarmaciaCritica(String codigo) {
+        int indice = getIndiceFarmacia(codigo);
+        if (indice == -1) return false;
+
+        int totalFarmacias = 0;
+        for (int i = 0; i < maxFarmacias; i++) {
+            if (getFarmaciaPorIndice(i) != null) {
+                totalFarmacias++;
+            }
+        }
+        if (totalFarmacias <= 1) return false;
+
+        int inicio = -1;
+        for (int i = 0; i < maxFarmacias; i++) {
+            Farmacia f = getFarmaciaPorIndice(i);
+            if (f != null && i != indice) {
+                inicio = i;
+                break;
+            }
+        }
+        if (inicio == -1) return false;
+
+        boolean[] visitado = new boolean[maxFarmacias];
+        Cola<Integer> cola = new Cola<>();
+        cola.encolar(inicio);
+        visitado[inicio] = true;
+
+        int alcanzados = 1;
+
+        while (!cola.esVacia()) {
+            int actual = cola.desencolar();
+            for (int j = 0; j < maxFarmacias; j++) {
+                if (!visitado[j] && j != indice) {
+                    Conexion c = getConexion(actual, j);
+                    if (c != null) {
+                        visitado[j] = true;
+                        cola.encolar(j);
+                        alcanzados++;
+                    }
+                }
+            }
+        }
+
+        return alcanzados < (totalFarmacias - 1);
+    }
+
+
+
+
 
 
 
